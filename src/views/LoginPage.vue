@@ -1,9 +1,7 @@
 <template>
     <v-app>
-        <v-col class="text-center" cols="12" sm="4">
-            <div class="my-2">
-                <v-btn color="primary">Conectar com Google</v-btn>
-            </div>
+        <v-col class="text-center" cols="12" sm="12">
+            <v-btn color="primary" @click="GoogleSignIn">Conectar com Google</v-btn>
         </v-col>
     </v-app>
 </template>
@@ -12,6 +10,10 @@
 
 <script>
 export default {
-
+    methods: {
+        GoogleSignIn(){
+            this.$router.push('/groupOptions')
+        }
+    }
 }
 </script>
