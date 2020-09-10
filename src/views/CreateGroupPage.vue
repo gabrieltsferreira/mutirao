@@ -49,16 +49,43 @@
                         </template>
 
                         <v-list-item
-                            v-for="subItem in item.activities"
+                            v-for="(subItem, index) in item.activities"
                             :key="subItem.name"                           
                         >
                             <v-list-item-content>
-                                <v-list-item-title v-text="subItem.name"></v-list-item-title>
-                                <v-text-field v-model="activity" label="Atividade" placeholder="Ex: Lavar Louça"></v-text-field>
-                                <v-text-field v-model="points" label="Pontos" placeholder="Ex: 40" type="number"></v-text-field>
-                                <v-btn @click="addActivity(subItem)">Adicionar Atividade</v-btn>
+                                <v-list-item-title>
+                                    {{subItem.name + ' - ' + subItem.points + ' pts'}}
+                                    <v-btn icon @click="removeActivity(item, index)">
+                                        <v-icon>delete</v-icon>
+                                    </v-btn>                             
+                                </v-list-item-title>                                                       
                             </v-list-item-content>
                         </v-list-item>
+                        <v-row justify="center">
+                                    <v-col cols="12" sm="6" md="3">
+                                        <v-text-field 
+                                            v-model="activity" 
+                                            label="Atividade" 
+                                            placeholder="Ex: Lavar Louça"
+                                            outlined>
+                                        </v-text-field>
+                                    </v-col>
+                                    <v-col cols="1" sm="1" md="1">
+                                        <v-text-field 
+                                            v-model="points" 
+                                            label="Pontos" 
+                                            placeholder="Ex: 40" 
+                                            type="number"
+                                            outlined>
+                                        </v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" sm="6" md="3">
+                                        <v-btn 
+                                            @click="addActivity(item)"
+                                        >Adicionar Atividade
+                                        </v-btn>
+                                    </v-col>
+                                </v-row>             
                     </v-list-group>
                 </v-list>
             </v-card-text>
@@ -91,8 +118,6 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
-
-        <!--Add Activity Modal-->
     
     </div>  
 </template>
@@ -132,10 +157,24 @@ export default {
         },
 
         addActivity(item){
-            item.name = this.activity;
-            item.points = this.points;
-            
+            if(item.activities[0].name=="") {
+                item.activities[0].name = this.activity;
+                item.activities[0].points = this.points;
+            }
+            else {
+                let activity = {
+                    name: this.activity,
+                    points: this.points
+                }
 
+                console.log(item)
+                item.activities.push(activity);
+            }
+                
+        },
+
+        removeActivity(item, index){
+            item.activities.splice(index, 1)
         }
     }
 }

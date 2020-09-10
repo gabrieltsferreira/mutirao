@@ -1,9 +1,9 @@
 <template>
-    <v-app>
+    <v-card>
         <v-col class="text-center" cols="12" sm="12">
             <v-btn color="primary" @click="GoogleSignIn">Conectar com Google</v-btn>
         </v-col>
-    </v-app>
+    </v-card>
 </template>
 
 
