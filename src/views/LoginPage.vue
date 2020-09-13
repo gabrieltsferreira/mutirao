@@ -30,7 +30,16 @@ export default {
                 .then((result) => {
                     var token = result.credential.accessToken;
                     var user = result.user;
-                    console.log(user);
+                    //console.log(user);
+
+                    let obj = {
+                        displayName: user.displayName
+                    }
+
+                    this.$store.commit('SET_USER', obj);
+
+                    console.log(this.$store.state.store.displayName)
+
                     this.$router.push('/groupOptions');
                 })
                 .catch((error) => {
