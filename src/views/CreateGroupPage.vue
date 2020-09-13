@@ -16,8 +16,8 @@
                 Informações
             </v-card-title>
             <v-card-text>
-                <v-text-field label="Nome"></v-text-field>
-                <v-text-field label="Descrição"></v-text-field>
+                <v-text-field v-model="name" label="Nome"></v-text-field>
+                <v-text-field v-model="description" label="Descrição"></v-text-field>
             </v-card-text>
             <v-card-actions>
                 <v-spacer>
@@ -94,6 +94,9 @@
                     <v-btn @click="page=1">
                         anterior
                     </v-btn>
+                    <v-btn @click="createGroup">
+                        Criar Grupo
+                    </v-btn>
                 </v-spacer>
             </v-card-actions>
         </v-card>
@@ -124,6 +127,8 @@
 
 
 <script>
+import firebase from '../firebase/firebaseInit'
+
 export default {
     data: () => ({
         page: 1,
@@ -134,9 +139,10 @@ export default {
 
         room: "",
         activity: "",
-        points: 0
+        points: 0,
 
-        
+        name: "",
+        description: ""
     }),
 
     methods: {
@@ -175,6 +181,15 @@ export default {
 
         removeActivity(item, index){
             item.activities.splice(index, 1)
+        },
+
+
+        createGroup(){
+            firebase.firestore().collection('group').add({
+                name: this.name,
+                description: this.description,
+                activities: this.activities
+            })
         }
     }
 }
