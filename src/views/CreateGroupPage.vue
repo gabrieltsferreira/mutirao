@@ -135,14 +135,14 @@ export default {
 
         dialog: false,
 
-        activities: [],
+        name: "",
+        description: "",
+        activities: [],     
+
 
         room: "",
         activity: "",
         points: 0,
-
-        name: "",
-        description: ""
     }),
 
     methods: {
@@ -173,7 +173,6 @@ export default {
                     points: this.points
                 }
 
-                console.log(item)
                 item.activities.push(activity);
             }
                 
@@ -185,10 +184,20 @@ export default {
 
 
         createGroup(){
+            let player = {
+                name: this.$store.state.store.displayName,
+                email: this.$store.state.store.email,
+                points: 0
+            }
+
+            let players = [];
+            players.push(player);       
+
             firebase.firestore().collection('group').add({
                 name: this.name,
                 description: this.description,
-                activities: this.activities
+                activities: this.activities,
+                players: players
             })
         }
     }

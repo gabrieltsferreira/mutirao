@@ -47,6 +47,16 @@ export default {
             docRef.get()
                 .then(doc=>{
                     if(doc.exists){
+                        let newPlayer = {
+                            name: this.$store.state.store.displayName,
+                            email: this.$store.state.store.email,
+                            points: 0
+                        }
+
+                        docRef.update({
+                            players: firebase.firestore.FieldValue.arrayUnion(newPlayer)
+                        });
+
                         console.log(doc.data())
                         this.$router.push('/leaderboard');
                     }                       

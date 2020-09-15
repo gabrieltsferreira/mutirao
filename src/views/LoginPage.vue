@@ -33,12 +33,11 @@ export default {
                     //console.log(user);
 
                     let obj = {
-                        displayName: user.displayName
+                        displayName: user.displayName,
+                        email: user.email
                     }
 
                     this.$store.commit('SET_USER', obj);
-
-                    console.log(this.$store.state.store.displayName)
 
                     this.$router.push('/groupOptions');
                 })
