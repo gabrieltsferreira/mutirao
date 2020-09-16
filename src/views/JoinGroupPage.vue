@@ -58,7 +58,7 @@ export default {
                         });
 
                         console.log(doc.data())
-                        this.$router.push('/leaderboard');
+                        this.$router.push('/main');
                     }                       
                     else
                         console.log("Não existe")

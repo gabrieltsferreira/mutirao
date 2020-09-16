@@ -6,7 +6,7 @@ import LoginPage from '@/views/LoginPage'
 import GroupOptionsPage from '@/views/GroupOptionsPage'
 import CreateGroupPage from '@/views/CreateGroupPage'
 import JoinGroupPage from '@/views/JoinGroupPage'
-import LeaderboardPage from '@/views/LeaderboardPage'
+import MainTabs from '@/views/MainTabs'
 
 Vue.use(Router)
 
@@ -33,9 +33,9 @@ export default new Router({
       component: JoinGroupPage
     },
     {
-      path: '/leaderboard',
-      name: 'LeaderboardPage',
-      component: LeaderboardPage
+      path: '/main',
+      name: 'MainTabs',
+      component: MainTabs
     }
   ]
 })
