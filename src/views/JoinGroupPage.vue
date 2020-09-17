@@ -58,7 +58,7 @@ export default {
                         });
 
                         console.log(doc.data())
-                        this.$router.push('/main');
+                        this.$router.push({name: 'MainTabs', params: {id: this.token}});
                     }                       
                     else
                         console.log("Não existe")

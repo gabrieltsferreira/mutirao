@@ -33,9 +33,10 @@ export default new Router({
       component: JoinGroupPage
     },
     {
-      path: '/main',
+      path: '/main/:id',
       name: 'MainTabs',
-      component: MainTabs
+      component: MainTabs,
+      props: true 
     }
   ]
 })

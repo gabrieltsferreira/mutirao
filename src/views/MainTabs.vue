@@ -22,7 +22,7 @@
                 <v-icon>trending_up</v-icon>
             </v-tab>
             <v-tab>
-               <v-icon>fas fa-brush</v-icon>
+               <v-icon>add</v-icon>
             </v-tab>
         </v-tabs>
 
@@ -31,11 +31,20 @@
 
 <script>
 export default {
+    props:{
+        id: {
+            type: String,
+            required: true,
+            default: ''
+        }
+    },
+    
     data: () => ({
         token: "",
 
         tabs: null
     }),
+
 
     methods:{
         getData(){
