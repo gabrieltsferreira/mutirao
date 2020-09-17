@@ -30,6 +30,8 @@
 </template>
 
 <script>
+import firebase from '../firebase/firebaseInit'
+
 export default {
     props:{
         id: {
@@ -38,16 +40,31 @@ export default {
             default: ''
         }
     },
-    
+
     data: () => ({
         token: "",
 
         tabs: null
     }),
 
+    created(){
+        this.getData();
+    },
 
     methods:{
         getData(){
+            var docRef = firebase.firestore().collection("group").doc(this.id);
+
+            docRef.get()           
+                .then(doc=> {
+                    if(doc.exists){
+                        console.log(doc.data())
+                    }
+
+
+                }).catch(err=>{
+
+                })
 
         }
     }

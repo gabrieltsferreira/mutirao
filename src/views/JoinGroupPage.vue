@@ -57,15 +57,15 @@ export default {
                             players: firebase.firestore.FieldValue.arrayUnion(newPlayer)
                         });
 
-                        console.log(doc.data())
+                        
                         this.$router.push({name: 'MainTabs', params: {id: this.token}});
                     }                       
                     else
                         console.log("Não existe")
 
-            }).catch(err=>{
-                console.log(err)
-            })
+                }).catch(err=>{
+                    console.log(err)
+                })
             
         }
     }
