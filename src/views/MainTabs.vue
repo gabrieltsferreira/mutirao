@@ -82,7 +82,11 @@
                         >
                             <v-list-item-content>
                                 <v-list-item-title>
-                                    {{subItem.name + ' - ' + subItem.points + ' pts'}}                            
+                                    {{subItem.name + ' - ' + subItem.points + ' pts'}}
+                                    
+                                    <v-btn @click="finishActivity(subItem)">
+                                        Concluir
+                                    </v-btn>                             
                                 </v-list-item-title>                                                       
                             </v-list-item-content>
                         </v-list-item>
@@ -129,8 +133,7 @@ export default {
         getData(){
             var docRef = firebase.firestore().collection("group").doc(this.id);
 
-            docRef.get()           
-                .then(doc=> {
+            docRef.onSnapshot(doc=> {
                     if(doc.exists){
                         this.data = doc.data()
 
@@ -140,10 +143,21 @@ export default {
                     }
 
 
-                }).catch(err=>{
+                });
 
-                })
+        },
 
+        finishActivity(item){
+            var currentPlayer = this.players.find(obj => obj.email==this.$store.state.store.email);
+
+            currentPlayer.points += item.points;
+
+
+            var docRef = firebase.firestore().collection("group").doc(this.id);
+
+            docRef.update({
+                players: this.players
+            });
         }
     }
     
