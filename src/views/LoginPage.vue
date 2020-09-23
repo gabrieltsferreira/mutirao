@@ -10,7 +10,7 @@
                 color="#DB4437"  
                 @click="GoogleSignIn"
             >
-                <v-icon left></v-icon>
+                <v-icon left>fab fa-google</v-icon>
                 Conectar com Google
             </v-btn>
         </v-col>

@@ -12,18 +12,25 @@
 
         <v-tabs
             v-model="tab"
-            fixed-tabs
             background-color="indigo"
+            center-active
+            grow
             dark
         >
             <v-tab href="#configurations">
                 <v-icon>miscellaneous_services</v-icon>
             </v-tab>
+            <v-tab href="#stats">
+                <v-icon>mdi-chart-bar</v-icon>
+            </v-tab>
             <v-tab href="#leaderboards">
-                <v-icon>trending_up</v-icon>
+                <v-icon>mdi-podium</v-icon>
             </v-tab>
             <v-tab href="#activities">
-               <v-icon>add</v-icon>
+               <v-icon>mdi-broom</v-icon>
+            </v-tab>
+            <v-tab href="#achievements">
+                <v-icon>mdi-trophy-variant</v-icon>
             </v-tab>
         </v-tabs>
 
@@ -35,8 +42,15 @@
                 </v-card>
             </v-tab-item>
 
+            <!-- Stats -->
+            <v-tab-item key="2" value="stats">
+                <v-card>
+                    <v-card-title>Stats</v-card-title>
+                </v-card>
+            </v-tab-item>
+
             <!-- Leaderboards -->
-            <v-tab-item key="2" value="leaderboards">
+            <v-tab-item key="3" value="leaderboards">
                 <v-card>
                     <v-card-title>Classificação</v-card-title>
                     <v-card-text>
@@ -61,7 +75,7 @@
             </v-tab-item>
 
             <!-- Activities -->
-            <v-tab-item key="3" value="activities">
+            <v-tab-item key="4" value="activities">
                 <v-card>
                     <v-card-title>Atividades</v-card-title>
                     <v-list>
@@ -93,6 +107,13 @@
 
                         </v-list-group>
                     </v-list>
+                </v-card>
+            </v-tab-item>
+
+            <!-- Achievements -->
+            <v-tab-item key="5" value="achievements">
+                <v-card>
+                    <v-card-title>Conquistas</v-card-title>
                 </v-card>
             </v-tab-item>
 
