@@ -52,11 +52,11 @@ export default {
                             email: this.$store.state.store.email,
                             points: 0
                         }
-
-                        docRef.update({
-                            players: firebase.firestore.FieldValue.arrayUnion(newPlayer)
-                        });
-
+                        if(!doc.data().players.find(obj => obj.email==newPlayer.email)){
+                            docRef.update({
+                                players: firebase.firestore.FieldValue.arrayUnion(newPlayer)
+                            });
+                        }
                         
                         this.$router.push({name: 'MainTabs', params: {id: this.token}});
                     }                       
