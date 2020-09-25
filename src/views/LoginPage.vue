@@ -30,11 +30,11 @@ export default {
                 .then((result) => {
                     var token = result.credential.accessToken;
                     var user = result.user;
-                    //console.log(user);
 
                     let obj = {
                         displayName: user.displayName,
-                        email: user.email
+                        email: user.email,
+                        photoURL: user.photoURL
                     }
 
                     this.$store.commit('SET_USER', obj);

@@ -11,7 +11,8 @@ export default new Vuex.Store({
         // stores globally the logged user info
         displayName: "",
         email:"",
-        token: ""
+        token: "",
+        photoURL: ""
       },
     },
     plugins: [createPersistedState()], // makes vuex to be saved locally

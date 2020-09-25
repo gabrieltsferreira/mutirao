@@ -158,7 +158,7 @@ export default {
                     if(doc.exists){
                         this.data = doc.data()
 
-                        this.players = this.data.players;
+                        this.players = this.data.players.sort((a,b) => b.points - a.points);
                         this.activities = this.data.activities;
                         this.groupName = this.data.name;
                     }
@@ -171,8 +171,7 @@ export default {
         finishActivity(item){
             var currentPlayer = this.players.find(obj => obj.email==this.$store.state.store.email);
 
-            currentPlayer.points += item.points;
-
+            currentPlayer.points += Number(item.points);
 
             var docRef = firebase.firestore().collection("group").doc(this.id);
 
