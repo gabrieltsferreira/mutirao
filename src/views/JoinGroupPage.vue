@@ -50,6 +50,7 @@ export default {
                         let newPlayer = {
                             name: this.$store.state.store.displayName,
                             email: this.$store.state.store.email,
+                            photoURL: this.$store.state.store.photoURL,
                             points: 0
                         }
                         if(!doc.data().players.find(obj => obj.email==newPlayer.email)){

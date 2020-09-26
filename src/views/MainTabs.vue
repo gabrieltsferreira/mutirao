@@ -39,6 +39,9 @@
             <v-tab-item key="1" value="configurations">
                 <v-card>
                     <v-card-title>Configurações</v-card-title>
+                    <v-card-text>
+
+                    </v-card-text>
                 </v-card>
             </v-tab-item>
 
@@ -63,9 +66,19 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="item in players" :key="item.name">
-                                <td>{{ item.name }}</td>
-                                <td>{{ item.points }}</td>
+                                <tr v-for="(item,index) in players" :key="item.name">
+                                    <td>
+                                        <v-icon v-if="index==0">
+                                            mdi-crown
+                                        </v-icon>
+                                        <v-avatar size="32">
+                                            <img
+                                                :src="item.photoURL"
+                                            >
+                                        </v-avatar>
+                                        {{ item.name }}
+                                    </td>
+                                    <td>{{ item.points }}</td>
                                 </tr>
                             </tbody>
                             </template>
@@ -143,7 +156,7 @@ export default {
 
         groupName: "",
 
-        tab: null
+        tab: 'leaderboards'
     }),
 
     created(){
