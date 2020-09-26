@@ -27,7 +27,7 @@
                 <v-icon>mdi-podium</v-icon>
             </v-tab>
             <v-tab href="#activities">
-               <v-icon>mdi-broom</v-icon>
+               <v-icon>fa-broom</v-icon>
             </v-tab>
             <v-tab href="#achievements">
                 <v-icon>mdi-trophy-variant</v-icon>
@@ -38,9 +38,54 @@
             <!-- Configurations -->
             <v-tab-item key="1" value="configurations">
                 <v-card>
-                    <v-card-title>Configurações</v-card-title>
+                    <v-card-title>
+                        Configurações
+                    </v-card-title>
                     <v-card-text>
+                        <v-card>
+                            <v-toolbar flat color="primary" dark>
+                                <v-toolbar-title>Configurações</v-toolbar-title>
+                            </v-toolbar>
 
+                            <v-tabs vertical>                              
+                                <v-tab>
+                                    <v-icon left>fa-home</v-icon>
+                                </v-tab>
+                                <v-tab>
+                                    <v-icon left>fa-broom</v-icon>
+                                </v-tab>
+                                <v-tab>
+                                    <v-icon left>fa-users</v-icon>
+                                </v-tab>
+                                <v-tab>
+                                    <v-icon left>fa-info</v-icon>
+                                </v-tab>
+
+                                <v-tab-item>
+                                    <v-card flat>
+                                        <v-card-text>
+                                        
+                                        </v-card-text>
+                                    </v-card>
+                                </v-tab-item>
+
+                                <v-tab-item>
+                                    <v-card flat>
+                                        <v-card-text>
+                                            
+                                        </v-card-text>
+                                    </v-card>
+                                </v-tab-item>
+
+                                <v-tab-item>
+                                    <v-card flat>
+                                        <v-card-text>
+                                            
+                                        </v-card-text>
+                                    </v-card>
+                                </v-tab-item>
+                            </v-tabs>
+                        </v-card>
                     </v-card-text>
                 </v-card>
             </v-tab-item>
