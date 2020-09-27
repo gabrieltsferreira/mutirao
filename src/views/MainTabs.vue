@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-app-bar
-            color="primary"
+            color="#087317"
             dense
             dark
         >
@@ -12,7 +12,7 @@
 
         <v-tabs
             v-model="tab"
-            background-color="indigo"
+            background-color="#087317"
             center-active
             grow
             dark
@@ -44,46 +44,107 @@
                     <v-card-text>
                         <v-card>
                             <v-toolbar flat color="primary" dark>
-                                <v-toolbar-title>Configurações</v-toolbar-title>
+                                <v-toolbar-title>{{configTab}}</v-toolbar-title>
                             </v-toolbar>
 
-                            <v-tabs vertical>                              
-                                <v-tab>
+                            <v-tabs vertical v-model="configTab">                              
+                                <v-tab href="#Geral">
                                     <v-icon left>fa-home</v-icon>
                                 </v-tab>
-                                <v-tab>
+                                <v-tab href="#Atividades">
                                     <v-icon left>fa-broom</v-icon>
                                 </v-tab>
-                                <v-tab>
+                                <v-tab href="#Participantes">
                                     <v-icon left>fa-users</v-icon>
                                 </v-tab>
-                                <v-tab>
+                                <v-tab href="#Sobre">
                                     <v-icon left>fa-info</v-icon>
                                 </v-tab>
 
-                                <v-tab-item>
-                                    <v-card flat>
-                                        <v-card-text>
-                                        
-                                        </v-card-text>
-                                    </v-card>
-                                </v-tab-item>
+                                <v-tabs-items v-model="configTab">
+                                    <v-tab-item key="1" value="Geral">
+                                        <v-card flat>
+                                            <v-card-text>
+                                                Home
+                                            </v-card-text>
+                                        </v-card>
+                                    </v-tab-item>
 
-                                <v-tab-item>
-                                    <v-card flat>
-                                        <v-card-text>
-                                            
-                                        </v-card-text>
-                                    </v-card>
-                                </v-tab-item>
+                                    <v-tab-item key="2" value="Atividades">
+                                        <v-card flat>
+                                            <v-card-text>
+                                                <v-btn @click="addRoom(subItem)">
+                                                    Adicionar Cômodo
+                                                </v-btn>  
+                                                <v-list>
+                                                    <v-list-group
+                                                        v-for="item in activities"
+                                                        :key="item.name"
+                                                    >
+                                                    <template v-slot:activator>
+                                                        <v-list-item-content>
+                                                            <v-list-item-content>
+                                                                <v-list-item-title v-text="item.name"></v-list-item-title>
+                                                            </v-list-item-content>
+                                                        </v-list-item-content>
+                                                    </template>
+                                                    <v-list-item
+                                                        v-for="subItem in item.activities"
+                                                        :key="subItem.name"                           
+                                                    >
+                                                        <v-list-item-content>
+                                                            <v-list-item-title>
+                                                                {{subItem.name + ' - ' + subItem.points + ' pts'}}
+                                                                
+                                                                <v-btn icon @click="editActivity(subItem)">
+                                                                    <v-icon>edit</v-icon>
+                                                                </v-btn>     
+                                                                <v-btn icon @click="deleteActivity(subItem)">
+                                                                    <v-icon>delete</v-icon>
+                                                                </v-btn>                        
+                                                            </v-list-item-title>                                                       
+                                                        </v-list-item-content>
+                                                    </v-list-item>
+                                                    <v-btn 
+                                                        color="primary"
+                                                        @click="addActivity(item)"
+                                                    >Adicionar Atividade
+                                                    </v-btn>
 
-                                <v-tab-item>
-                                    <v-card flat>
-                                        <v-card-text>
-                                            
-                                        </v-card-text>
-                                    </v-card>
-                                </v-tab-item>
+                                                    </v-list-group>
+                                                </v-list>
+                                            </v-card-text>
+                                        </v-card>
+                                    </v-tab-item>
+
+                                    <v-tab-item key="3" value="Participantes">
+                                        <v-card flat>
+                                            <v-card-text>
+                                                <h2>Convide um novo participante utilizando a token a seguir</h2>
+                                                <v-row justify="center">
+                                                    <v-col cols="12" lg="3" md="3" sm="3">
+                                                        <v-text-field
+                                                            class="mt-5"
+                                                            :value="this.id"
+                                                            readonly
+                                                            outlined
+                                                            append-icon="fa-clipboard"
+                                                        >
+                                                        </v-text-field>
+                                                    </v-col>
+                                                </v-row>                                        
+                                            </v-card-text>
+                                        </v-card>
+                                    </v-tab-item>
+
+                                    <v-tab-item key="4" value="Sobre">
+                                        <v-card flat>
+                                            <v-card-text>
+                                                Sobre
+                                            </v-card-text>
+                                        </v-card>
+                                    </v-tab-item>
+                                </v-tabs-items>
                             </v-tabs>
                         </v-card>
                     </v-card-text>
@@ -106,22 +167,27 @@
                             <template v-slot:default>
                             <thead>
                                 <tr>
-                                <th class="text-center">Nome</th>
+                                <th class="text-center"></th>
+                                <th class="text-left">Nome</th>
                                 <th class="text-center">Pontos</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr v-for="(item,index) in players" :key="item.name">
                                     <td>
-                                        <v-icon v-if="index==0">
+                                        <v-icon v-if="index==0 && item.points>0">
                                             mdi-crown
                                         </v-icon>
-                                        <v-avatar size="32">
+                                    </td>
+                                    <td>
+                                        <v-layout align-center>                                       
+                                        <v-avatar class="mr-2" size="32">
                                             <img
                                                 :src="item.photoURL"
                                             >
                                         </v-avatar>
                                         {{ item.name }}
+                                        </v-layout>
                                     </td>
                                     <td>{{ item.points }}</td>
                                 </tr>
@@ -150,13 +216,13 @@
                         </template>
                         <v-list-item
                             v-for="subItem in item.activities"
-                            :key="subItem.name"                           
+                            :key="subItem.name"                                                   
                         >
-                            <v-list-item-content>
+                            <v-list-item-content style="background: #D8EEDB;">
                                 <v-list-item-title>
                                     {{subItem.name + ' - ' + subItem.points + ' pts'}}
                                     
-                                    <v-btn @click="finishActivity(subItem)">
+                                    <v-btn color="green" dark @click="finishActivity(subItem)">
                                         Concluir
                                     </v-btn>                             
                                 </v-list-item-title>                                                       
@@ -201,7 +267,9 @@ export default {
 
         groupName: "",
 
-        tab: 'leaderboards'
+        tab: 'leaderboards',
+
+        configTab: null
     }),
 
     created(){
