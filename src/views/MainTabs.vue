@@ -65,7 +65,34 @@
                                     <v-tab-item key="1" value="Geral">
                                         <v-card flat>
                                             <v-card-text>
-                                                Home
+                                        
+                                                
+                                                    <v-row justify="center">
+                                                        <v-chip
+                                                            class="ma-2"
+                                                            color="primary"
+                                                            large
+                                                        >
+                                                        Apelido
+                                                        </v-chip>
+                                                        <v-col cols="12" lg="3" md="3" sm="3">
+                                                            <v-text-field
+                                                            outlined
+                                                            >
+                                                            </v-text-field>
+                                                        </v-col>
+                                                    </v-row>
+                                                
+                                                  
+                                                
+                                                
+
+                                                <v-btn color="primary" @click="resetPoints(subItem)">
+                                                    Subtrair pontos
+                                                </v-btn>
+                                                <v-btn color="primary" @click="resetPoints(subItem)">
+                                                    Zerar pontos
+                                                </v-btn>
                                             </v-card-text>
                                         </v-card>
                                     </v-tab-item>
