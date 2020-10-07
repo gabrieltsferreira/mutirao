@@ -2,7 +2,7 @@
     <div v-resize="OnResize">
         <v-row justify="center">
             <v-img :src="require('@/assets/mutirao.png')" 
-                    :max-height="mobile ? '180' :'200'"
+                    :max-height="mobile ? '200' :'200'"
                     :max-width="mobile ? '320' :'500'"/>
         </v-row>
         <br />

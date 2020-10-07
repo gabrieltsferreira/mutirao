@@ -1,33 +1,29 @@
 <template>
     <div>
-        <v-app-bar
-                color="primary"
-                dense
-                dark
-            >
-            <v-spacer>
-                <h2>Entrar em um Grupo</h2>
-            </v-spacer>
-        </v-app-bar>
-
-        <v-card
-            class="mx-auto mt-5"
-            height="300"
-            width="300"
-        >
-            <v-card-text>
-                <v-text-field 
-                    class="mx-5" 
-                    label="Inserir Token" 
-                    v-model="token" 
-                    outlined>
-                </v-text-field>
-                <v-btn @click="joinGroup">
-                    Entrar
-                </v-btn>
-            </v-card-text>
-        
+        <v-card height="90" flat>
+            <h2 class="mt-10">Entrar em um Grupo</h2>
         </v-card>
+        <v-container style="background: #1E88E5;" fill-width fluid>
+            <h4><p style="color: white">Insira uma token válida abaixo para participar</p></h4>
+            <v-card
+                class="mx-auto mt-5"
+                height="300"
+                width="300"
+            >
+                <v-card-text>
+                    <v-text-field 
+                        class="mx-5" 
+                        label="Token" 
+                        v-model="token" 
+                        outlined>
+                    </v-text-field>
+                    <v-btn color="primary" @click="joinGroup">
+                        Entrar
+                    </v-btn>
+                </v-card-text>
+            
+            </v-card>
+        </v-container>
     </div>
 </template>
 

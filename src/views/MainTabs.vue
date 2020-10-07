@@ -117,9 +117,9 @@
                                                     >
                                                         <v-list-item-content>
                                                             <v-list-item-title>
-                                                                <h4>
+                                                                <h5>
                                                                     {{subItem.name + ' - ' + subItem.points + ' pts'}}
-                                                                </h4>
+                                                                </h5>
                                                                 
                                                                 <v-btn icon @click="editActivity(subItem)">
                                                                     <v-icon>edit</v-icon>
