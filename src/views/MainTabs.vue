@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-app-bar
-            color="#087317"
+            color="#1E88E5"
             dense
             dark
         >
@@ -12,7 +12,7 @@
 
         <v-tabs
             v-model="tab"
-            background-color="#087317"
+            background-color="#1E88E5"
             center-active
             grow
             dark
@@ -38,10 +38,6 @@
             <!-- Configurations -->
             <v-tab-item key="1" value="configurations">
                 <v-card>
-                    <v-card-title>
-                        Configurações
-                    </v-card-title>
-                    <v-card-text>
                         <v-card>
                             <v-toolbar flat color="primary" dark>
                                 <v-toolbar-title>{{configTab}}</v-toolbar-title>
@@ -87,10 +83,11 @@
                                                 
                                                 
 
-                                                <v-btn color="primary" @click="resetPoints(subItem)">
+                                                <v-btn block color="primary" @click="resetPoints(subItem)">
                                                     Subtrair pontos
                                                 </v-btn>
-                                                <v-btn color="primary" @click="resetPoints(subItem)">
+                                                <v-spacer/>
+                                                <v-btn class="mt-1" block color="primary" @click="resetPoints(subItem)">
                                                     Zerar pontos
                                                 </v-btn>
                                             </v-card-text>
@@ -99,8 +96,7 @@
 
                                     <v-tab-item key="2" value="Atividades">
                                         <v-card flat>
-                                            <v-card-text>
-                                                <v-btn @click="addRoom(subItem)">
+                                                <v-btn class="mt-2" color="primary" block @click="addRoom(subItem)">
                                                     Adicionar Cômodo
                                                 </v-btn>  
                                                 <v-list>
@@ -121,14 +117,18 @@
                                                     >
                                                         <v-list-item-content>
                                                             <v-list-item-title>
-                                                                {{subItem.name + ' - ' + subItem.points + ' pts'}}
+                                                                <h4>
+                                                                    {{subItem.name + ' - ' + subItem.points + ' pts'}}
+                                                                </h4>
                                                                 
                                                                 <v-btn icon @click="editActivity(subItem)">
                                                                     <v-icon>edit</v-icon>
                                                                 </v-btn>     
                                                                 <v-btn icon @click="deleteActivity(subItem)">
                                                                     <v-icon>delete</v-icon>
-                                                                </v-btn>                        
+                                                                </v-btn>     
+
+                                                                <v-divider />                   
                                                             </v-list-item-title>                                                       
                                                         </v-list-item-content>
                                                     </v-list-item>
@@ -140,7 +140,6 @@
 
                                                     </v-list-group>
                                                 </v-list>
-                                            </v-card-text>
                                         </v-card>
                                     </v-tab-item>
 
@@ -174,7 +173,7 @@
                                 </v-tabs-items>
                             </v-tabs>
                         </v-card>
-                    </v-card-text>
+
                 </v-card>
             </v-tab-item>
 
@@ -245,13 +244,14 @@
                             v-for="subItem in item.activities"
                             :key="subItem.name"                                                   
                         >
-                            <v-list-item-content style="background: #D8EEDB;">
+                            <v-list-item-content style="background: #CEF8F9;">
                                 <v-list-item-title>
-                                    {{subItem.name + ' - ' + subItem.points + ' pts'}}
+                                    <h4>{{subItem.name + ' - ' + subItem.points + ' pts'}}</h4>
                                     
-                                    <v-btn color="green" dark @click="finishActivity(subItem)">
+                                    <v-btn class="mt-2" color="#1CD833" dark @click="finishActivity(subItem)">
                                         Concluir
-                                    </v-btn>                             
+                                    </v-btn> 
+                                    <v-divider class="mt-5 mx-5" />                            
                                 </v-list-item-title>                                                       
                             </v-list-item-content>
                         </v-list-item>
