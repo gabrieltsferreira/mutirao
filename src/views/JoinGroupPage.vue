@@ -4,7 +4,7 @@
             <h2 class="mt-10">Entrar em um Grupo</h2>
         </v-card>
         <v-container style="background: #1E88E5;" fill-width fluid>
-            <h4><p style="color: white">Insira uma token válida abaixo para participar</p></h4>
+            <h4><p style="color: white">Insira uma token válida abaixo para participar de um grupo já existente</p></h4>
             <v-card
                 class="mx-auto mt-5"
                 height="300"

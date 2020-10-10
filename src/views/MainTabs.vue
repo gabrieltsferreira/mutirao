@@ -60,34 +60,27 @@
                                 <v-tabs-items v-model="configTab">
                                     <v-tab-item key="1" value="Geral">
                                         <v-card flat>
-                                            <v-card-text>
-                                        
-                                                
-                                                    <v-row justify="center">
-                                                        <v-chip
-                                                            class="ma-2"
-                                                            color="primary"
-                                                            large
+                                            <v-card-text>                                              
+                                                <v-row justify="center">
+                                                    <v-chip
+                                                        class="ma-2"
+                                                        color="primary"
+                                                        large
+                                                    >
+                                                    Apelido
+                                                    </v-chip>
+                                                    <v-col cols="12" lg="3" md="3" sm="3">
+                                                        <v-text-field
+                                                        outlined
                                                         >
-                                                        Apelido
-                                                        </v-chip>
-                                                        <v-col cols="12" lg="3" md="3" sm="3">
-                                                            <v-text-field
-                                                            outlined
-                                                            >
-                                                            </v-text-field>
-                                                        </v-col>
-                                                    </v-row>
-                                                
-                                                  
-                                                
-                                                
-
-                                                <v-btn block color="primary" @click="resetPoints(subItem)">
+                                                        </v-text-field>
+                                                    </v-col>
+                                                </v-row>
+                                                <v-btn block color="primary" @click.stop="dialog.subtract=true">
                                                     Subtrair pontos
                                                 </v-btn>
                                                 <v-spacer/>
-                                                <v-btn class="mt-1" block color="primary" @click="resetPoints(subItem)">
+                                                <v-btn class="mt-1" block color="primary" @click.stop="dialog.reset=true">
                                                     Zerar pontos
                                                 </v-btn>
                                             </v-card-text>
@@ -155,6 +148,7 @@
                                                             readonly
                                                             outlined
                                                             append-icon="fa-clipboard"
+                                                            @focus="copyToClipboard"
                                                         >
                                                         </v-text-field>
                                                     </v-col>
@@ -270,6 +264,61 @@
 
         </v-tabs-items>
 
+
+        <!---------------Dialogs-------------------------------------------------------------->
+
+        <!----Finish Activity---->
+        <v-dialog v-model="dialog.finishActivity">
+            <v-card>
+                <v-card-title>
+                    <h4>Parabens!</h4>
+                </v-card-title>
+                <v-card-text>
+                    <v-btn @click="closeDialog" color="primary" dark depressed>
+                        <v-icon>check</v-icon>
+                    </v-btn>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
+
+        <!----Subtract Points---->
+        <v-dialog v-model="dialog.subtract">
+            <v-card>
+                <v-card-title>
+                    Subtrair Pontos
+                </v-card-title>
+                <v-card-text>
+                    <v-text-field v-model="pointsConfig" type="number" suffix="pontos" outlined>
+
+                    </v-text-field>
+                    <v-btn @click="closeDialog" color="red" outlined>
+                        <v-icon color="red">close</v-icon>
+                    </v-btn>
+                    <v-btn @click="subtractPoints" color="primary" dark depressed>
+                        <v-icon>check</v-icon>
+                    </v-btn>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
+
+        <!----Reset Points---->
+        <v-dialog v-model="dialog.reset">
+            <v-card>
+                <v-card-title>
+                    <h4>Zerar Pontos de Todos os Jogadores?</h4>
+                </v-card-title>
+                <v-card-text>
+                    
+                    <v-btn @click="closeDialog" color="red" outlined>
+                        <v-icon color="red">close</v-icon>
+                    </v-btn>
+                    <v-btn @click="resetPoints" color="primary" dark depressed>
+                        <v-icon>check</v-icon>
+                    </v-btn>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
+
     </div>   
 </template>
 
@@ -296,7 +345,16 @@ export default {
 
         tab: 'leaderboards',
 
-        configTab: null
+        configTab: null,
+
+        dialog: {
+            finishActivity: false,
+            subtract: false,
+            reset: false,
+        },
+
+        pointsConfig: 0
+        
     }),
 
     created(){
@@ -331,6 +389,50 @@ export default {
             docRef.update({
                 players: this.players
             });
+
+            this.dialog.finishActivity = true;
+        },
+
+        subtractPoints(){
+            this.players.forEach(player => player.points -= Number(this.pointsConfig))
+
+            var docRef = firebase.firestore().collection("group").doc(this.id);
+
+            docRef.update({
+                players: this.players
+            });
+
+            this.closeDialog();
+        },
+
+        resetPoints(){
+            this.players.forEach(player => player.points = Number(0))
+
+            var docRef = firebase.firestore().collection("group").doc(this.id);
+
+            docRef.update({
+                players: this.players
+            });
+
+            this.closeDialog();
+        },
+
+        closeDialog(){
+            this.dialog.finishActivity = false;
+            this.dialog.subtract = false;
+            this.dialog.reset = false;
+            this.pointsConfig = 0;
+        },
+
+        copyToClipboard(){
+            var copy = document.createElement('textarea');
+            document.body.appendChild(copy);
+            copy.value = this.id;
+            copy.select();
+            document.execCommand('copy');
+            document.body.removeChild(copy);
+            
+            alert('Token copiada!');
         }
     }
     
