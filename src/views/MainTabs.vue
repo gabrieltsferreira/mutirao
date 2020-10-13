@@ -89,7 +89,7 @@
 
                                     <v-tab-item key="2" value="Atividades">
                                         <v-card flat>
-                                                <v-btn class="mt-2" color="primary" block @click="addRoom(subItem)">
+                                                <v-btn class="mt-2" color="primary" block @click.stop="dialog.addRoom=true">
                                                     Adicionar Cômodo
                                                 </v-btn>  
                                                 <v-list>
@@ -114,10 +114,19 @@
                                                                     {{subItem.name + ' - ' + subItem.points + ' pts'}}
                                                                 </h5>
                                                                 
-                                                                <v-btn icon @click="editActivity(subItem)">
+                                                                <v-btn 
+                                                                    icon 
+                                                                    @click="dialog.addActivity=true, 
+                                                                            dialog.editActivity=true, 
+                                                                            activityConfig=subItem.name, 
+                                                                            pointsConfig=subItem.points">
                                                                     <v-icon>edit</v-icon>
                                                                 </v-btn>     
-                                                                <v-btn icon @click="deleteActivity(subItem)">
+                                                                <v-btn 
+                                                                    icon
+                                                                    @click="dialog.deleteActivity=true,
+                                                                            activityConfig=subItem.name
+                                                                            pointsConfig=subItem.points">
                                                                     <v-icon>delete</v-icon>
                                                                 </v-btn>     
 
@@ -127,12 +136,19 @@
                                                     </v-list-item>
                                                     <v-btn 
                                                         color="primary"
-                                                        @click="addActivity(item)"
+                                                        @click.stop="dialog.addActivity=true"
                                                     >Adicionar Atividade
                                                     </v-btn>
 
                                                     </v-list-group>
                                                 </v-list>
+                                                <v-divider />
+                                                <v-btn 
+                                                    class="mb-3"
+                                                    color="primary"
+                                                    @click="addActivity(item)"
+                                                    >Salvar Alterações
+                                                </v-btn>
                                         </v-card>
                                     </v-tab-item>
 
@@ -305,7 +321,7 @@
         <v-dialog v-model="dialog.reset">
             <v-card>
                 <v-card-title>
-                    <h4>Zerar Pontos de Todos os Jogadores?</h4>
+                    <h4>Zerar Pontos de Todos os Participantes?</h4>
                 </v-card-title>
                 <v-card-text>
                     
@@ -313,6 +329,73 @@
                         <v-icon color="red">close</v-icon>
                     </v-btn>
                     <v-btn @click="resetPoints" color="primary" dark depressed>
+                        <v-icon>check</v-icon>
+                    </v-btn>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
+
+        <!----Add Room---->
+        <v-dialog v-model="dialog.addRoom">
+            <v-card>
+                <v-card-title>
+                    Adicionar Cômodo
+                </v-card-title>
+                <v-card-text>
+                    <v-text-field v-model="roomConfig" label="Nome" outlined>
+
+                    </v-text-field>
+                    <v-btn @click="closeDialog" color="red" outlined>
+                        <v-icon color="red">close</v-icon>
+                    </v-btn>
+                    <v-btn @click="subtractPoints" color="primary" dark depressed>
+                        <v-icon>check</v-icon>
+                    </v-btn>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
+
+        <!----Add/Edit Activity---->
+        <v-dialog v-model="dialog.addActivity">
+            <v-card>
+                <v-card-title>
+                    {{dialog.editActivity ? 'Editar Atividade' : 'Adicionar Atividade' }} 
+                </v-card-title>
+                <v-card-text>
+                    <v-text-field 
+                        v-model="activityConfig" 
+                        label="Nome" 
+                        outlined>
+                    </v-text-field>
+
+                    <v-text-field v-model="pointsConfig" type="number" label="Pontos" outlined>
+
+                    </v-text-field>
+                    <v-btn @click="closeDialog" color="red" outlined>
+                        <v-icon color="red">close</v-icon>
+                    </v-btn>
+                    <v-btn @click="subtractPoints" color="primary" dark depressed>
+                        <v-icon>check</v-icon>
+                    </v-btn>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
+
+        <!----Delete Activity---->
+        <v-dialog v-model="dialog.deleteActivity">
+            <v-card>
+                <v-card-title>
+                    Remover Atividade? 
+                </v-card-title>
+                <v-card-text>
+                    <br />
+                    <h3>{{activityConfig + " - " + pointsConfig + "pontos" }}</h3>
+                    <br/>
+
+                    <v-btn @click="closeDialog" color="red" outlined>
+                        <v-icon color="red">close</v-icon>
+                    </v-btn>
+                    <v-btn @click="subtractPoints" color="primary" dark depressed>
                         <v-icon>check</v-icon>
                     </v-btn>
                 </v-card-text>
@@ -351,9 +434,17 @@ export default {
             finishActivity: false,
             subtract: false,
             reset: false,
+            addRoom: false,
+            addActivity: false,
+            editActivity: false,
+            deleteActivity: false,
+            currentItem: null
         },
 
-        pointsConfig: 0
+        pointsConfig: 0,
+
+        roomConfig: '',
+        activityConfig:''
         
     }),
 
@@ -418,10 +509,12 @@ export default {
         },
 
         closeDialog(){
-            this.dialog.finishActivity = false;
-            this.dialog.subtract = false;
-            this.dialog.reset = false;
+            let dialogs = this.dialog;
+            Object.keys(dialogs).forEach(v => dialogs[v] = false);
+            
             this.pointsConfig = 0;
+            this.roomConfig = '',
+            this.activityConfig = ''
         },
 
         copyToClipboard(){
