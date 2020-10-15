@@ -105,7 +105,7 @@
                                                         </v-list-item-content>
                                                     </template>
                                                     <v-list-item
-                                                        v-for="subItem in item.activities"
+                                                        v-for="(subItem) in item.activities"
                                                         :key="subItem.name"                           
                                                     >
                                                         <v-list-item-content>
@@ -118,6 +118,7 @@
                                                                     icon 
                                                                     @click="dialog.addActivity=true, 
                                                                             dialog.editActivity=true, 
+                                                                            dialog.currentActivity=subItem,
                                                                             activityConfig=subItem.name, 
                                                                             pointsConfig=subItem.points">
                                                                     <v-icon>edit</v-icon>
@@ -125,7 +126,9 @@
                                                                 <v-btn 
                                                                     icon
                                                                     @click="dialog.deleteActivity=true,
-                                                                            activityConfig=subItem.name
+                                                                            dialog.currentActivity=subItem,
+                                                                            dialog.currentRoom=item,
+                                                                            activityConfig=subItem.name,
                                                                             pointsConfig=subItem.points">
                                                                     <v-icon>delete</v-icon>
                                                                 </v-btn>     
@@ -136,7 +139,7 @@
                                                     </v-list-item>
                                                     <v-btn 
                                                         color="primary"
-                                                        @click.stop="dialog.addActivity=true"
+                                                        @click.stop="dialog.addActivity=true, dialog.currentRoom=item"
                                                     >Adicionar Atividade
                                                     </v-btn>
 
@@ -348,7 +351,7 @@
                     <v-btn @click="closeDialog" color="red" outlined>
                         <v-icon color="red">close</v-icon>
                     </v-btn>
-                    <v-btn @click="subtractPoints" color="primary" dark depressed>
+                    <v-btn @click="addRoom" color="primary" dark depressed>
                         <v-icon>check</v-icon>
                     </v-btn>
                 </v-card-text>
@@ -374,7 +377,7 @@
                     <v-btn @click="closeDialog" color="red" outlined>
                         <v-icon color="red">close</v-icon>
                     </v-btn>
-                    <v-btn @click="subtractPoints" color="primary" dark depressed>
+                    <v-btn @click="dialog.editActivity ? editActivity() : addActivity()" color="primary" dark depressed>
                         <v-icon>check</v-icon>
                     </v-btn>
                 </v-card-text>
@@ -395,7 +398,7 @@
                     <v-btn @click="closeDialog" color="red" outlined>
                         <v-icon color="red">close</v-icon>
                     </v-btn>
-                    <v-btn @click="subtractPoints" color="primary" dark depressed>
+                    <v-btn @click="deleteActivity" color="primary" dark depressed>
                         <v-icon>check</v-icon>
                     </v-btn>
                 </v-card-text>
@@ -438,7 +441,9 @@ export default {
             addActivity: false,
             editActivity: false,
             deleteActivity: false,
-            currentItem: null
+
+            currentRoom: null,
+            currentActivity: null
         },
 
         pointsConfig: 0,
@@ -506,6 +511,41 @@ export default {
             });
 
             this.closeDialog();
+        },
+
+        addRoom(){
+            let newRoom = {
+                activities: [],
+                name: this.roomConfig
+            }
+
+            this.activities.push(newRoom)
+
+            this.closeDialog()
+        },
+
+        addActivity(){
+            let newActivity = {
+                name: this.activityConfig,
+                points: this.pointsConfig
+            }
+
+            this.dialog.currentRoom.activities.push(newActivity)
+
+            this.closeDialog()
+        },
+
+        editActivity(){
+            this.dialog.currentActivity.name = this.activityConfig
+            this.dialog.currentActivity.points = this.pointsConfig
+
+            this.closeDialog()
+        },
+
+        deleteActivity(){
+            this.dialog.currentRoom.activities.splice(this.dialog.currentActivity, 1)
+
+            this.closeDialog()
         },
 
         closeDialog(){
