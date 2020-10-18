@@ -61,21 +61,17 @@
                                     <v-tab-item key="1" value="Geral">
                                         <v-card flat>
                                             <v-card-text>                                              
-                                                <v-row justify="center">
-                                                    <v-chip
-                                                        class="ma-2"
-                                                        color="primary"
-                                                        large
-                                                    >
-                                                    Apelido
-                                                    </v-chip>
-                                                    <v-col cols="12" lg="3" md="3" sm="3">
-                                                        <v-text-field
-                                                        outlined
-                                                        >
-                                                        </v-text-field>
-                                                    </v-col>
-                                                </v-row>
+                                                <v-text-field
+                                                    label="Apelido"
+                                                    outlined
+                                                >
+                                                </v-text-field>
+                                                <v-text-field
+                                                    label="Meta de Pontos"
+                                                    type="number"
+                                                    outlined
+                                                >
+                                                </v-text-field>
                                                 <v-btn block color="primary" @click.stop="dialog.subtract=true">
                                                     Subtrair pontos
                                                 </v-btn>
@@ -189,7 +185,15 @@
                 <v-card>
                     <v-card-title>Dados</v-card-title>
                     <v-card-text>
-                        
+                        <v-sparkline                      
+                            :value="value"
+                            show-labels
+                            label-size="15"
+                            color="black"
+                            auto-line-width
+                            padding="16"
+                            type="bar"
+                        ></v-sparkline>
                     </v-card-text>
                 </v-card>
                 <v-card class="mt-2">
@@ -297,7 +301,7 @@
                                 <v-list-item-title>
                                     <h4>{{subItem.name + ' - ' + subItem.points + ' pts'}}</h4>
                                     
-                                    <v-btn class="mt-2" color="#1CD833" dark @click="finishActivity(subItem, item.name)">
+                                    <v-btn class="mt-2" color="#1CD833" dark depressed @click="finishActivity(subItem, item.name)">
                                         Concluir
                                     </v-btn> 
                                     <v-divider class="mt-5 mx-5" />                            
