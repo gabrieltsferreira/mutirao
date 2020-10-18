@@ -105,7 +105,7 @@
                                                         </v-list-item-content>
                                                     </template>
                                                     <v-list-item
-                                                        v-for="(subItem) in item.activities"
+                                                        v-for="(subItem, index) in item.activities"
                                                         :key="subItem.name"                           
                                                     >
                                                         <v-list-item-content>
@@ -119,6 +119,7 @@
                                                                     @click="dialog.addActivity=true, 
                                                                             dialog.editActivity=true, 
                                                                             dialog.currentActivity=subItem,
+                                                                            dialog.currentRoom=item,
                                                                             activityConfig=subItem.name, 
                                                                             pointsConfig=subItem.points">
                                                                     <v-icon>edit</v-icon>
@@ -126,7 +127,7 @@
                                                                 <v-btn 
                                                                     icon
                                                                     @click="dialog.deleteActivity=true,
-                                                                            dialog.currentActivity=subItem,
+                                                                            dialog.currentActivity=index,
                                                                             dialog.currentRoom=item,
                                                                             activityConfig=subItem.name,
                                                                             pointsConfig=subItem.points">
@@ -145,13 +146,6 @@
 
                                                     </v-list-group>
                                                 </v-list>
-                                                <v-divider />
-                                                <v-btn 
-                                                    class="mb-3"
-                                                    color="primary"
-                                                    @click="addActivity(item)"
-                                                    >Salvar Alterações
-                                                </v-btn>
                                         </v-card>
                                     </v-tab-item>
 
@@ -193,7 +187,49 @@
             <!-- Stats -->
             <v-tab-item key="2" value="stats">
                 <v-card>
-                    <v-card-title>Stats</v-card-title>
+                    <v-card-title>Dados</v-card-title>
+                    <v-card-text>
+                        
+                    </v-card-text>
+                </v-card>
+                <v-card class="mt-2">
+                    <v-card-text>
+                        <div style="background: #1E88E5;">
+                        <h4 style="color: white">Registros</h4>
+                        </div>
+                        <v-virtual-scroll
+                            :items="logs"
+                            height="200"
+                            item-height="64"
+                        >
+                            <template v-slot="{ item }">
+                                <v-list-item :key="item.index">
+                                    <v-list-item-content>
+                                        <v-row align="center">
+                                            <v-col cols="4">
+                                                <p style="font-size:13px">{{item.date}}</p>
+                                            </v-col>
+                                            <v-col>
+                                                <p 
+                                                :style="
+                                                    item.log.includes('completou') ? 'font-size:13px;color:green;'
+                                                    : item.log.includes('subtraiu')
+                                                        ||item.log.includes('zerou')
+                                                        ? 'font-size:13px;color:orange;'
+                                                    : item.log.includes('adicionou')
+                                                        ||item.log.includes('editou') 
+                                                        ? 'font-size:13px;color:blue;'
+                                                    : item.log.includes('deletou') ? 'font-size:13px;color:red;' : 'font-size:13px;'
+                                                ">              
+                                                    {{item.log}}
+                                                </p>
+                                            </v-col>
+                                        </v-row>
+                                    </v-list-item-content>                                   
+                                </v-list-item>
+                            </template>
+                        </v-virtual-scroll>
+                    </v-card-text>
                 </v-card>
             </v-tab-item>
 
@@ -261,7 +297,7 @@
                                 <v-list-item-title>
                                     <h4>{{subItem.name + ' - ' + subItem.points + ' pts'}}</h4>
                                     
-                                    <v-btn class="mt-2" color="#1CD833" dark @click="finishActivity(subItem)">
+                                    <v-btn class="mt-2" color="#1CD833" dark @click="finishActivity(subItem, item.name)">
                                         Concluir
                                     </v-btn> 
                                     <v-divider class="mt-5 mx-5" />                            
@@ -421,6 +457,16 @@ export default {
     },
 
     data: () => ({
+        value: [
+        423,
+        446,
+        675,
+        510,
+        590,
+        610,
+        760,
+      ],
+
         data: [],
 
         players: [],
@@ -428,6 +474,8 @@ export default {
         activities: [],
 
         groupName: "",
+
+        logs: [],
 
         tab: 'leaderboards',
 
@@ -468,14 +516,38 @@ export default {
                         this.players = this.data.players.sort((a,b) => b.points - a.points);
                         this.activities = this.data.activities;
                         this.groupName = this.data.name;
+                        this.logs = this.data.logs.reverse();
                     }
+
+                    this.data.activities.forEach((item, index) => {
+                        if(item.activities.length===0)
+                            this.data.activities.splice(index, 1)
+                    });
+
+                    docRef.update({
+                        activities: this.activities
+                    });
 
 
                 });
 
         },
 
-        finishActivity(item){
+        getLocalDate(){
+            var date = new Date();
+
+            var options = {
+                year: "numeric",
+                month: "2-digit",
+                day: "numeric",
+                hour: "numeric",
+                minute: "numeric"
+            };
+
+            return date.toLocaleDateString("pt", options)
+        },
+
+        finishActivity(item, roomName){
             var currentPlayer = this.players.find(obj => obj.email==this.$store.state.store.email);
 
             currentPlayer.points += Number(item.points);
@@ -485,6 +557,17 @@ export default {
             docRef.update({
                 players: this.players
             });
+            
+            //----Log Activity----//
+            let log = {
+                log: currentPlayer.name + " completou " + item.name + " - " + item.points + "pts (" + roomName + ")",
+                date: this.getLocalDate()
+            }
+
+            docRef.update({
+                logs: firebase.firestore.FieldValue.arrayUnion(log)
+            });
+            //--------//---------//
 
             this.dialog.finishActivity = true;
         },
@@ -498,6 +581,17 @@ export default {
                 players: this.players
             });
 
+            //----Log Activity----//
+            let log = {
+                log: this.$store.state.store.displayName + " subtraiu " + this.pointsConfig + " pontos do grupo",
+                date: this.getLocalDate()
+            }
+
+            docRef.update({
+                logs: firebase.firestore.FieldValue.arrayUnion(log)
+            });
+            //--------//---------//
+
             this.closeDialog();
         },
 
@@ -509,6 +603,19 @@ export default {
             docRef.update({
                 players: this.players
             });
+            
+            //----Log Activity----//
+
+            let log = {
+                log: this.$store.state.store.displayName + " zerou os pontos do grupo",
+                date: this.getLocalDate()
+            }
+
+            docRef.update({
+                logs: firebase.firestore.FieldValue.arrayUnion(log)
+            });
+            //--------//---------//
+
 
             this.closeDialog();
         },
@@ -532,6 +639,24 @@ export default {
 
             this.dialog.currentRoom.activities.push(newActivity)
 
+            var docRef = firebase.firestore().collection("group").doc(this.id);
+
+            docRef.update({
+                activities: this.activities
+            });
+
+            //----Log Activity----//
+            let log = {
+                log: this.$store.state.store.displayName + " adicionou " + newActivity.name + " - " + newActivity.points + "pts (" + this.dialog.currentRoom.name + ")",
+                date: this.getLocalDate()
+            }
+
+            docRef.update({
+                logs: firebase.firestore.FieldValue.arrayUnion(log)
+            });
+            //--------//---------//
+            
+
             this.closeDialog()
         },
 
@@ -539,11 +664,45 @@ export default {
             this.dialog.currentActivity.name = this.activityConfig
             this.dialog.currentActivity.points = this.pointsConfig
 
+            var docRef = firebase.firestore().collection("group").doc(this.id);
+
+            docRef.update({
+                activities: this.activities
+            });
+
+            //----Log Activity----//
+            let log = {
+                log: this.$store.state.store.displayName + " editou " + this.dialog.currentActivity.name + " (" + this.dialog.currentRoom.name + ")",
+                date: this.getLocalDate()
+            }
+
+            docRef.update({
+                logs: firebase.firestore.FieldValue.arrayUnion(log)
+            });
+            //--------//---------//
+
             this.closeDialog()
         },
 
         deleteActivity(){
             this.dialog.currentRoom.activities.splice(this.dialog.currentActivity, 1)
+
+            var docRef = firebase.firestore().collection("group").doc(this.id);
+
+            docRef.update({
+                activities: this.activities
+            });
+
+            //----Log Activity----//
+            let log = {
+                log: this.$store.state.store.displayName + " deletou " + this.activityConfig + " - " + this.pointsConfig + "pts (" + this.dialog.currentRoom.name + ")",
+                date: this.getLocalDate()
+            }
+
+            docRef.update({
+                logs: firebase.firestore.FieldValue.arrayUnion(log)
+            });
+            //--------//---------//
 
             this.closeDialog()
         },

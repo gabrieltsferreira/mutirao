@@ -197,7 +197,8 @@ export default {
                 name: this.name,
                 description: this.description,
                 activities: this.activities,
-                players: players
+                players: players,
+                logs: []
             })
         }
     }
