@@ -185,6 +185,7 @@ export default {
 
         createGroup(){
             let player = {
+                nick:'',
                 name: this.$store.state.store.displayName,
                 email: this.$store.state.store.email,
                 points: 0
@@ -198,7 +199,8 @@ export default {
                 description: this.description,
                 activities: this.activities,
                 players: players,
-                logs: []
+                logs: [],
+                goal: 0
             })
         }
     }

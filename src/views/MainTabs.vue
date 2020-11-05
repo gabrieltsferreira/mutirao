@@ -63,13 +63,17 @@
                                             <v-card-text>                                              
                                                 <v-text-field
                                                     label="Apelido"
+                                                    v-model="nick"
                                                     outlined
+                                                    @blur="setNickName"
                                                 >
                                                 </v-text-field>
                                                 <v-text-field
                                                     label="Meta de Pontos"
                                                     type="number"
+                                                    v-model="goal"
                                                     outlined
+                                                    @blur="setGoal"
                                                 >
                                                 </v-text-field>
                                                 <v-btn block color="primary" @click.stop="dialog.subtract=true">
@@ -265,10 +269,24 @@
                                                 :src="item.photoURL"
                                             >
                                         </v-avatar>
-                                        {{ item.name }}
+                                        {{ item.nick ? item.nick : item.name }}
                                         </v-layout>
                                     </td>
-                                    <td>{{ item.points }}</td>
+                                    <td>
+                                        <v-progress-circular
+                                            v-if="item.points/goal<1"
+                                            :size="20"
+                                            :value="item.points/goal*100"
+                                            :color="item.points/goal*100<=25 ? 'red': 
+                                                    item.points/goal*100>25&&item.points/goal*100<50 ? 'orange':
+                                                    item.points/goal*100>=50&&item.points/goal*100<65 ? 'yellow':
+                                                    item.points/goal*100>=65? 'green':''">
+                                        </v-progress-circular>
+                                        <v-icon v-if="item.points/goal>=1" color="green">
+                                            done
+                                        </v-icon>
+                                        {{ item.points }}
+                                    </td>
                                 </tr>
                             </tbody>
                             </template>
@@ -501,7 +519,11 @@ export default {
         pointsConfig: 0,
 
         roomConfig: '',
-        activityConfig:''
+        activityConfig:'',
+
+        nick: '',
+        goal: 0,
+        previousGoal: 0
         
     }),
 
@@ -521,6 +543,11 @@ export default {
                         this.activities = this.data.activities;
                         this.groupName = this.data.name;
                         this.logs = this.data.logs.reverse();
+                        this.goal = this.data.goal;
+                        this.previousGoal = this.data.goal;
+
+                        var currentPlayer = this.players.find(obj => obj.email==this.$store.state.store.email);
+                        this.nick = currentPlayer.nick;
                     }
 
                     this.data.activities.forEach((item, index) => {
@@ -729,7 +756,35 @@ export default {
             document.body.removeChild(copy);
             
             alert('Token copiada!');
+        },
+
+        setNickName(){
+            var currentPlayer = this.players.find(obj => obj.email==this.$store.state.store.email);
+
+            if(this.nick!=currentPlayer.nick){
+                currentPlayer.nick = this.nick;
+
+                var docRef = firebase.firestore().collection("group").doc(this.id);
+
+                docRef.update({
+                    players: this.players
+                });
+
+            }
+        },
+
+        setGoal(){
+            if(this.goal != this.previousGoal){
+                var docRef = firebase.firestore().collection("group").doc(this.id);
+
+                docRef.update({
+                    goal: this.goal
+                });
+            }     
+
         }
+
+        
     }
     
 }
