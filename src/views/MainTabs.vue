@@ -189,27 +189,40 @@
                 <v-card>
                     <v-card-title>Dados</v-card-title>
                     <v-card-text>
-                        <h3>Últimos 7 dias</h3>             
-                            <h4>Atividades por Cômodo</h4>
-                            <li v-for="item in activitiesOcurrByRoom" :key="item">
-                                {{item}}
-                            </li>
-                            <v-row>
-                                <v-col>
-                                    <h4>Atividade Mais Realizada</h4>
-                                    {{mostOcurrActivity}}
-                                </v-col>
-                                <v-col>
-                                    <h4>Atividade Menos Realizada</h4>
-                                    {{leastOcurrActivity}}
-                                </v-col>
-                            </v-row>                       
+                        <div style="background: #1E88E5;">
+                            <h4 style="color: white">Últimos 7 dias</h4>
+                        </div>  
+                        <v-carousel 
+                            v-model="statsSlide" 
+                            height="150" 
+                            :show-arrows="false"
+                            hide-delimiter-background
+                        >
+                            <v-carousel-item
+                            v-for="(color, i) in colors"
+                            :key="color"
+                            >
+                                <v-sheet
+                                    :color="color"
+                                    height="100%"
+                                    tile
+                                >
+                                    <v-row align="center" justify="center">
+                                        <h3 class="mt-2">{{statsHeaders[i]}}</h3>
+                                    </v-row>
+                                    <br/>
+                                    <v-row align="center" justify="center">
+                                        <strong>{{ stats[i] }}</strong>
+                                    </v-row>
+                                </v-sheet>
+                            </v-carousel-item>
+                        </v-carousel>                              
                     </v-card-text>
                 </v-card>
                 <v-card class="mt-2">
                     <v-card-text>
                         <div style="background: #1E88E5;">
-                        <h4 style="color: white">Registros</h4>
+                            <h4 style="color: white">Registros</h4>
                         </div>
                         <v-virtual-scroll
                             :items="logs"
@@ -343,10 +356,12 @@
                 <v-card>
                     <v-card-title>Conquistas</v-card-title>
                     <v-card-text>
-                        <v-card color="#3FD2E9">                                                  
+                        <v-card 
+                            :color="checkAchievement(progress) ? '#3FD2E9' : '#A7BCC3'" 
+                            :elevation="checkAchievement(progress) ? '8' : '0'">                                                  
                             <v-row>
                                 <v-col class="ml-1" cols="4">
-                                    <v-chip large label color="#EFF21C">
+                                    <v-chip large label :color="checkAchievement(progress) ? '#EFF21C' : '#C7DAE0'">
                                         <v-icon large>fa-broom</v-icon>
                                     </v-chip>
                                 </v-col>
@@ -355,7 +370,9 @@
                                     <h5><p style="color:white;text-shadow:#000 0px 0px 3px;">Complete 10 atividades</p></h5>
                                 </v-col> 
                             </v-row>                       
-                            <v-progress-linear striped height="10" color="purple" value="15"></v-progress-linear>                          
+                            <v-progress-linear v-model="progress" striped height="10" color="purple">
+                                <strong>{{tasksCompleted}}/10</strong>
+                            </v-progress-linear>                          
                         </v-card>
                     </v-card-text>
                 </v-card>
@@ -539,7 +556,20 @@ export default {
 
         mostOcurrActivity: '',
         leastOcurrActivity: '',
-        activitiesOcurrByRoom: []
+        activitiesOcurrByRoom: [],
+        tasksCompleted: '',
+        progress: '',
+
+        statsSlide: 0,
+        stats: [],
+
+        statsHeaders:["Atividades Completas Por Cômodo","Atividade Mais Realizada","Atividade Menos Realizada"],
+
+        colors: [
+          'blue',
+          'green',
+          'red',
+        ],
         
     }),
 
@@ -601,14 +631,16 @@ export default {
                         }
 
                         function countOcurrences(arr1, arr2){
-                            let arr3 = [];
+                            let arr3 = '';
                             for(var i=0; i<arr1.length; i++){
                                 let count = 0;
                                 arr2.forEach(item => {
                                     if(item.includes(arr1[i]))
                                         count++;
                                 })
-                                arr3.push(arr1[i].concat('('+count+')'));                             
+                                arr3 = arr3.concat(arr1[i].concat('('+count+')'));
+                                if(i<arr1.length-1)
+                                    arr3 = arr3.concat(", ");                             
                             }
                             return arr3;
                         }
@@ -628,13 +660,17 @@ export default {
 
                     let rooms = this.activities.map(x=>x.name);
                 
-                    this.mostOcurrActivity = mostOcurrences(statsActivities);
-                    this.leastOcurrActivity = leastOcurrences(statsActivities);
-                    this.activitiesOcurrByRoom = countOcurrences(rooms, statsActivities)
+                    this.stats.push(countOcurrences(rooms, statsActivities));
+                    this.stats.push(mostOcurrences(statsActivities));
+                    this.stats.push(leastOcurrences(statsActivities));                   
                      //-----//------//------//-------//
 
 
-                    
+                     //Get achievements data
+                        this.tasksCompleted = this.logs.filter(x=>x.log.includes("completou")&&x.log.includes(currentPlayer.name)).length;
+                        this.progress = this.tasksCompleted/10*100;
+                     //-----//------//------//-------//
+
                 });
 
         },
@@ -857,6 +893,14 @@ export default {
                 });
             }     
 
+        },
+
+
+        checkAchievement(progress){
+            if(progress>=100)
+                return true;
+            else
+                return false;
         }
 
         
