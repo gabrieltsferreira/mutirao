@@ -161,7 +161,7 @@
                                                             readonly
                                                             outlined
                                                             append-icon="fa-clipboard"
-                                                            @focus="copyToClipboard"
+                                                            @click="copyToClipboard"
                                                         >
                                                         </v-text-field>
                                                     </v-col>
@@ -189,15 +189,21 @@
                 <v-card>
                     <v-card-title>Dados</v-card-title>
                     <v-card-text>
-                        <v-sparkline                      
-                            :value="value"
-                            show-labels
-                            label-size="15"
-                            color="black"
-                            auto-line-width
-                            padding="16"
-                            type="bar"
-                        ></v-sparkline>
+                        <h3>Últimos 7 dias</h3>             
+                            <h4>Atividades por Cômodo</h4>
+                            <li v-for="item in activitiesOcurrByRoom" :key="item">
+                                {{item}}
+                            </li>
+                            <v-row>
+                                <v-col>
+                                    <h4>Atividade Mais Realizada</h4>
+                                    {{mostOcurrActivity}}
+                                </v-col>
+                                <v-col>
+                                    <h4>Atividade Menos Realizada</h4>
+                                    {{leastOcurrActivity}}
+                                </v-col>
+                            </v-row>                       
                     </v-card-text>
                 </v-card>
                 <v-card class="mt-2">
@@ -336,6 +342,22 @@
             <v-tab-item key="5" value="achievements">
                 <v-card>
                     <v-card-title>Conquistas</v-card-title>
+                    <v-card-text>
+                        <v-card color="#3FD2E9">                                                  
+                            <v-row>
+                                <v-col class="ml-1" cols="4">
+                                    <v-chip large label color="#EFF21C">
+                                        <v-icon large>fa-broom</v-icon>
+                                    </v-chip>
+                                </v-col>
+                                <v-col>
+                                    <h2><p style="color:white;text-shadow:#000 0px 0px 3px;">Limpador Nvl 1</p></h2>
+                                    <h5><p style="color:white;text-shadow:#000 0px 0px 3px;">Complete 10 atividades</p></h5>
+                                </v-col> 
+                            </v-row>                       
+                            <v-progress-linear striped height="10" color="purple" value="15"></v-progress-linear>                          
+                        </v-card>
+                    </v-card-text>
                 </v-card>
             </v-tab-item>
 
@@ -479,16 +501,6 @@ export default {
     },
 
     data: () => ({
-        value: [
-        423,
-        446,
-        675,
-        510,
-        590,
-        610,
-        760,
-      ],
-
         data: [],
 
         players: [],
@@ -523,7 +535,11 @@ export default {
 
         nick: '',
         goal: 0,
-        previousGoal: 0
+        previousGoal: 0,
+
+        mostOcurrActivity: '',
+        leastOcurrActivity: '',
+        activitiesOcurrByRoom: []
         
     }),
 
@@ -550,6 +566,7 @@ export default {
                         this.nick = currentPlayer.nick;
                     }
 
+                    //Remove rooms without activities
                     this.data.activities.forEach((item, index) => {
                         if(item.activities.length===0)
                             this.data.activities.splice(index, 1)
@@ -558,8 +575,66 @@ export default {
                     docRef.update({
                         activities: this.activities
                     });
+                    //-----//------//------//-------//
 
 
+                    //Get last 7 days stats
+                        //Suport Functions
+                        Date.prototype.addDays = function(days) {
+                            var date = new Date(this.valueOf());
+                            date.setDate(date.getDate() + days);
+                            return date;
+                        }
+
+                        function mostOcurrences(arr){
+                            return arr.sort((a,b) =>
+                                arr.filter(v => v===a).length
+                                - arr.filter(v => v===b).length
+                            ).pop();
+                        }
+
+                        function leastOcurrences(arr){
+                            return arr.sort((a,b) =>
+                                arr.filter(v => v===b).length
+                                - arr.filter(v => v===a).length
+                            ).pop();
+                        }
+
+                        function countOcurrences(arr1, arr2){
+                            let arr3 = [];
+                            for(var i=0; i<arr1.length; i++){
+                                let count = 0;
+                                arr2.forEach(item => {
+                                    if(item.includes(arr1[i]))
+                                        count++;
+                                })
+                                arr3.push(arr1[i].concat('('+count+')'));                             
+                            }
+                            return arr3;
+                        }
+                        //-----//------//------//-------//
+
+                    let last7Days = [];
+                    let dateNow = new Date();
+                    for(var i=0; i<7; i++){
+                        last7Days.push(dateNow.addDays(-i).toLocaleDateString());
+                    }
+                    let statsLog = this.logs.filter(x=>x.log.includes("completou")&&last7Days.some(y=>y.includes(x.date.split(' ')[0])));
+                    
+                    let statsActivities = [];
+                    statsLog.forEach(item => {
+                        statsActivities.push(item.log.split("completou ")[1]);
+                    })
+
+                    let rooms = this.activities.map(x=>x.name);
+                
+                    this.mostOcurrActivity = mostOcurrences(statsActivities);
+                    this.leastOcurrActivity = leastOcurrences(statsActivities);
+                    this.activitiesOcurrByRoom = countOcurrences(rooms, statsActivities)
+                     //-----//------//------//-------//
+
+
+                    
                 });
 
         },
