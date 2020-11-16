@@ -31,7 +31,7 @@
                         dark
                         block
                         rounded
-                        color="primary"  
+                        color="#4267B2"  
                         @click="FacebookSignIn"
                     >
                         <v-icon left>fab fa-facebook</v-icon>

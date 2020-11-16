@@ -16,109 +16,154 @@
                 Informações
             </v-card-title>
             <v-card-text>
-                <v-text-field v-model="name" label="Nome"></v-text-field>
-                <v-text-field v-model="description" label="Descrição"></v-text-field>
+                <v-text-field v-model="name" label="Nome" outlined></v-text-field>
+                <v-text-field v-model="description" label="Descrição" outlined></v-text-field>
             </v-card-text>
+        </v-card>
+        <v-card flat v-if="page==1" class="mt-5">
             <v-card-actions>
                 <v-spacer>
-                    <v-btn @click="page=2">
-                        proximo
+                    <v-btn @click="page=2" color="primary">
+                        <v-icon>fa-arrow-right</v-icon>
                     </v-btn>
                 </v-spacer>
             </v-card-actions>
         </v-card>
 
         <!--Card Page 2-->
-        <v-card v-if="page==2">
-            <v-card-title>
-                Atividades
-            </v-card-title>
-            <v-card-text>
-                <v-btn @click="dialog=true">
+            <v-card v-if="page==2">
+                <v-btn class="mx-auto mt-2" color="primary" block @click.stop="dialog.addRoom=true">
                     Adicionar Cômodo
-                </v-btn>
+                </v-btn>  
                 <v-list>
                     <v-list-group
                         v-for="item in activities"
                         :key="item.name"
-                        >
-                        <template v-slot:activator>
+                    >
+                    <template v-slot:activator>
+                        <v-list-item-content>
                             <v-list-item-content>
                                 <v-list-item-title v-text="item.name"></v-list-item-title>
                             </v-list-item-content>
-                        </template>
-
-                        <v-list-item
-                            v-for="(subItem, index) in item.activities"
-                            :key="subItem.name"                           
-                        >
-                            <v-list-item-content>
-                                <v-list-item-title>
+                        </v-list-item-content>
+                    </template>
+                    <v-list-item
+                        v-for="(subItem, index) in item.activities"
+                        :key="subItem.name"                           
+                    >
+                        <v-list-item-content>
+                            <v-list-item-title>
+                                <h5>
                                     {{subItem.name + ' - ' + subItem.points + ' pts'}}
-                                    <v-btn icon @click="removeActivity(item, index)">
-                                        <v-icon>delete</v-icon>
-                                    </v-btn>                             
-                                </v-list-item-title>                                                       
-                            </v-list-item-content>
-                        </v-list-item>
-                        <v-row justify="center">
-                                    <v-col cols="12" sm="6" md="3">
-                                        <v-text-field 
-                                            v-model="activity" 
-                                            label="Atividade" 
-                                            placeholder="Ex: Lavar Louça"
-                                            outlined>
-                                        </v-text-field>
-                                    </v-col>
-                                    <v-col cols="1" sm="1" md="1">
-                                        <v-text-field 
-                                            v-model="points" 
-                                            label="Pontos" 
-                                            placeholder="Ex: 40" 
-                                            type="number"
-                                            outlined>
-                                        </v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="3">
-                                        <v-btn 
-                                            @click="addActivity(item)"
-                                        >Adicionar Atividade
-                                        </v-btn>
-                                    </v-col>
-                                </v-row>             
-                    </v-list-group>
-                </v-list>
-            </v-card-text>
-            <v-card-actions>
-                <v-spacer>
-                    <v-btn @click="page=1">
-                        anterior
+                                </h5>
+                                
+                                <v-btn 
+                                    icon 
+                                    @click="dialog.addActivity=true, 
+                                            dialog.editActivity=true, 
+                                            dialog.currentActivity=subItem,
+                                            dialog.currentRoom=item,
+                                            activityConfig=subItem.name, 
+                                            pointsConfig=subItem.points">
+                                    <v-icon>edit</v-icon>
+                                </v-btn>     
+                                <v-btn 
+                                    icon
+                                    @click="dialog.deleteActivity=true,
+                                            dialog.currentActivity=index,
+                                            dialog.currentRoom=item,
+                                            activityConfig=subItem.name,
+                                            pointsConfig=subItem.points">
+                                    <v-icon>delete</v-icon>
+                                </v-btn>     
+
+                                <v-divider />                   
+                            </v-list-item-title>                                                       
+                        </v-list-item-content>
+                    </v-list-item>
+                    <v-btn 
+                        class="mt-2"
+                        color="primary"
+                        @click.stop="dialog.addActivity=true, dialog.currentRoom=item"
+                    >Adicionar Atividade
                     </v-btn>
-                    <v-btn @click="createGroup">
+
+                    </v-list-group>
+                </v-list>             
+            </v-card>
+            <v-card flat v-if="page==2" class="mt-5">
+                    <v-btn @click="page=1" color="primary">
+                        <v-icon>fa-arrow-left</v-icon>
+                    </v-btn>
+                    <v-btn @click="createGroup" color="primary">
                         Criar Grupo
                     </v-btn>
-                </v-spacer>
-            </v-card-actions>
-        </v-card>
+            </v-card>
 
-        <!--Add Room Modal-->
-        <v-dialog
-            v-model="dialog"
-        >
+        <!----Add Room---->
+        <v-dialog v-model="dialog.addRoom">
             <v-card>
                 <v-card-title>
                     Adicionar Cômodo
                 </v-card-title>
                 <v-card-text>
-                    <v-text-field v-model="room" placeholder="Ex: Cozinha"></v-text-field>
+                    <v-text-field v-model="roomConfig" label="Nome" outlined>
+
+                    </v-text-field>
+                    <v-btn @click="closeDialog" color="red" outlined>
+                        <v-icon color="red">close</v-icon>
+                    </v-btn>
+                    <v-btn @click="addRoom" color="primary" dark depressed>
+                        <v-icon>check</v-icon>
+                    </v-btn>
                 </v-card-text>
-                <v-card-actions>
-                    <v-spacer>
-                        <v-btn @click="addRoom">
-                            Adicionar
-                        </v-btn>
-                    </v-spacer>
-                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
+        <!----Add/Edit Activity---->
+        <v-dialog v-model="dialog.addActivity">
+            <v-card>
+                <v-card-title>
+                    {{dialog.editActivity ? 'Editar Atividade' : 'Adicionar Atividade' }} 
+                </v-card-title>
+                <v-card-text>
+                    <v-text-field 
+                        v-model="activityConfig" 
+                        label="Nome" 
+                        outlined>
+                    </v-text-field>
+
+                    <v-text-field v-model="pointsConfig" type="number" label="Pontos" outlined>
+
+                    </v-text-field>
+                    <v-btn @click="closeDialog" color="red" outlined>
+                        <v-icon color="red">close</v-icon>
+                    </v-btn>
+                    <v-btn @click="dialog.editActivity ? editActivity() : addActivity()" color="primary" dark depressed>
+                        <v-icon>check</v-icon>
+                    </v-btn>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
+
+        <!----Delete Activity---->
+        <v-dialog v-model="dialog.deleteActivity">
+            <v-card>
+                <v-card-title>
+                    Remover Atividade? 
+                </v-card-title>
+                <v-card-text>
+                    <br />
+                    <h3>{{activityConfig + " - " + pointsConfig + "pontos" }}</h3>
+                    <br/>
+
+                    <v-btn @click="closeDialog" color="red" outlined>
+                        <v-icon color="red">close</v-icon>
+                    </v-btn>
+                    <v-btn @click="deleteActivity" color="primary" dark depressed>
+                        <v-icon>check</v-icon>
+                    </v-btn>
+                </v-card-text>
             </v-card>
         </v-dialog>
     
@@ -133,55 +178,69 @@ export default {
     data: () => ({
         page: 1,
 
-        dialog: false,
-
         name: "",
         description: "",
-        activities: [],     
+        activities: [],   
+        
+        dialog: {
+            addRoom: false,
+            addActivity: false,
+            editActivity: false,
+            deleteActivity: false,
 
+            currentRoom: null,
+            currentActivity: null
+        },
 
-        room: "",
-        activity: "",
-        points: 0,
+        pointsConfig: 0,
+
+        roomConfig: '',
+        activityConfig:'',
     }),
 
     methods: {
-        addRoom() {
-            let room = {
-                name: this.room,
-                activities: []
-            };
-
-            let activity = {
-                name: "",
-                points: null
+        addRoom(){
+            let newRoom = {
+                activities: [],
+                name: this.roomConfig
             }
+
+            this.activities.push(newRoom)
+
+            this.closeDialog()
+        },
+
+        addActivity(){
+            let newActivity = {
+                name: this.activityConfig,
+                points: this.pointsConfig
+            }
+            this.dialog.currentRoom.activities.push(newActivity)
             
-            room.activities.push(activity)
-            this.activities.push(room)
-            this.dialog=false;
+            this.closeDialog()
         },
 
-        addActivity(item){
-            if(item.activities[0].name=="") {
-                item.activities[0].name = this.activity;
-                item.activities[0].points = this.points;
-            }
-            else {
-                let activity = {
-                    name: this.activity,
-                    points: this.points
-                }
-
-                item.activities.push(activity);
-            }
-                
+        editActivity(){
+            this.dialog.currentActivity.name = this.activityConfig
+            this.dialog.currentActivity.points = this.pointsConfig
+            this.closeDialog()
         },
 
-        removeActivity(item, index){
-            item.activities.splice(index, 1)
+        deleteActivity(){
+            this.dialog.currentRoom.activities.splice(this.dialog.currentActivity, 1)
+            if(this.dialog.currentRoom.activities.length<1)
+                this.activities.splice(this.dialog.currentRoom, 1);
+            this.closeDialog()
         },
 
+        closeDialog(){
+            let dialogs = this.dialog;
+            Object.keys(dialogs).forEach(v => dialogs[v] = false);
+            
+            this.pointsConfig = 0;
+            this.roomConfig = '',
+            this.activityConfig = ''
+        },
 
         createGroup(){
             let player = {
@@ -201,7 +260,9 @@ export default {
                 players: players,
                 logs: [],
                 goal: 0
-            })
+            }).then(docRef=>{
+                this.$router.push({name: 'MainTabs', params: {id: docRef.id}});
+            }).catch(err)
         }
     }
 }
