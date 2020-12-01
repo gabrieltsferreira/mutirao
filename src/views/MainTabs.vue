@@ -574,7 +574,12 @@ export default {
     }),
 
     created(){
-        this.getData();
+        if(this.$store.state.store.email){
+            this.getData();
+        }
+        else{
+            this.$router.push({name: 'LoginPage'})
+        }
     },
 
     methods:{

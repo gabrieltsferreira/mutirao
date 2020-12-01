@@ -26,17 +26,7 @@
                         Conectar com Google
                     </v-btn>
                     
-                    <v-btn 
-                        class="mt-2"
-                        dark
-                        block
-                        rounded
-                        color="#4267B2"  
-                        @click="FacebookSignIn"
-                    >
-                        <v-icon left>fab fa-facebook</v-icon>
-                        Conectar com Facebook
-                    </v-btn>
+
                 </v-col>
             </v-card>
         </v-container>

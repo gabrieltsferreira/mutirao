@@ -197,7 +197,10 @@ export default {
         roomConfig: '',
         activityConfig:'',
     }),
-
+    created(){
+        if(!this.$store.state.store.email)
+            this.$router.push({name: 'LoginPage'})       
+    },
     methods: {
         addRoom(){
             let newRoom = {

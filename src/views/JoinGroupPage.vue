@@ -36,6 +36,11 @@ export default {
         token: ""
     }),
 
+    created(){
+        if(!this.$store.state.store.email)
+            this.$router.push({name: 'LoginPage'})       
+    },
+
     methods: {
         joinGroup() {
             var docRef = firebase.firestore().collection("group").doc(this.token);
