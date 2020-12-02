@@ -664,10 +664,11 @@ export default {
                     })
 
                     let rooms = this.activities.map(x=>x.name);
-                
+
+                    this.stats = [];
                     this.stats.push(countOcurrences(rooms, statsActivities));
                     this.stats.push(mostOcurrences(statsActivities));
-                    this.stats.push(leastOcurrences(statsActivities));                   
+                    this.stats.push(leastOcurrences(statsActivities));                
                      //-----//------//------//-------//
 
 

@@ -5,7 +5,10 @@
             dense
             dark
         >
-        <v-spacer>
+        <v-btn icon @click="$router.back()">
+            <v-icon>fa-arrow-left</v-icon>
+        </v-btn>
+        <v-spacer>           
             <h2>Criar Um Grupo</h2>
         </v-spacer>
         </v-app-bar>
